@@ -59,13 +59,12 @@ function modals() {
             if (!isShown) {                
                 showModal(modalSelector);
             }            
-        }, time);
-        
+        }, time);        
     }
 
     runModal('.popup_engineer', '.popup_engineer_btn', '.popup_close');
     runModal('.popup', '.phone_link', '.popup_close');
-    showModalWithDelay('.popup', 4000);
+    // showModalWithDelay('.popup', 60000);
 }
 
 export default modals;
