@@ -15787,15 +15787,23 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modules_modal__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./modules/modal */ "./src/js/modules/modal.js");
 /* harmony import */ var _modules_tab__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./modules/tab */ "./src/js/modules/tab.js");
 /* harmony import */ var _modules_forms__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./modules/forms */ "./src/js/modules/forms.js");
+/* harmony import */ var _modules_handlemodalstate__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./modules/handlemodalstate */ "./src/js/modules/handlemodalstate.js");
+
 
 
 
 
 window.addEventListener('DOMContentLoaded', () => {
+  const modalState = {
+    shape: 1,
+    profile: 'wood'
+  };
+  Object(_modules_handlemodalstate__WEBPACK_IMPORTED_MODULE_4__["default"])(modalState);
   Object(_modules_modal__WEBPACK_IMPORTED_MODULE_1__["default"])();
   Object(_modules_tab__WEBPACK_IMPORTED_MODULE_2__["default"])('.glazing_slider', '.glazing_block', '.glazing_content', 'active');
   Object(_modules_tab__WEBPACK_IMPORTED_MODULE_2__["default"])('.decoration_slider', '.no_click', '.decoration_content > .row > div', 'after_click');
-  Object(_modules_forms__WEBPACK_IMPORTED_MODULE_3__["default"])();
+  Object(_modules_tab__WEBPACK_IMPORTED_MODULE_2__["default"])('.balcon_icons', '.balcon_icons_img', '.big_img > img', 'do_image_more', 'inline');
+  Object(_modules_forms__WEBPACK_IMPORTED_MODULE_3__["default"])(modalState);
 });
 
 /***/ }),
@@ -15809,41 +15817,18 @@ window.addEventListener('DOMContentLoaded', () => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var core_js_modules_es_string_replace_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.string.replace.js */ "./node_modules/core-js/modules/es.string.replace.js");
-/* harmony import */ var core_js_modules_es_string_replace_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_replace_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _services__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./services */ "./src/js/modules/services.js");
 
 
-function forms() {
+function forms(modalState) {
   const formsList = document.querySelectorAll('form');
   const inputs = document.querySelectorAll('input');
-  const phoneInputs = document.querySelectorAll('input[name="user_phone"]');
   const message = {
     loading: 'Загрузка...',
     success: 'Спасибо! Мы с Вами скоро свяжемся!',
     fail: 'Ошибка отправки данных...'
   };
   let currentMessage = '';
-
-  async function sendForm(url, data) {
-    // let object = {};
-    // data.forEach((value, key) => object[key] = value);
-    // let json = JSON.stringify(object); 
-    // console.log(json);
-    const response = await fetch(url, {
-      method: 'POST',
-      // headers: {
-      //     'Content-Type': 'application/json;charset=utf-8'
-      // },           
-      body: data
-    });
-
-    if (response.ok) {
-      currentMessage = message.success;
-      return await response.text();
-    } else {
-      throw new Error("Wrong server responce");
-    }
-  }
 
   function clearInputs() {
     for (const input of inputs) {
@@ -15857,10 +15842,18 @@ function forms() {
         evt.preventDefault();
         const formData = new FormData(item);
         const messageBox = document.createElement('div');
+
+        if (item.dataset.calc === 'end') {
+          for (const key in modalState) {
+            formData.append(key, modalState[key]);
+          }
+        }
+
         messageBox.classList.add('status');
         messageBox.textContent = message.loading;
         item.appendChild(messageBox);
-        sendForm('./assets/server.php', formData).then(response => {
+        Object(_services__WEBPACK_IMPORTED_MODULE_0__["sendForm"])('./assets/server.php', formData).then(response => {
+          currentMessage = message.success;
           console.log(response);
           return response;
         }).catch(error => {
@@ -15870,25 +15863,130 @@ function forms() {
           setTimeout(() => {
             messageBox.remove();
             clearInputs();
+
+            if (item.dataset.calc === 'end') {
+              modalState = {
+                shape: 1,
+                profile: 'wood'
+              };
+            }
           }, 5000);
         });
       });
     }
   }
 
-  function handlePhoneInputs() {
-    for (const input of phoneInputs) {
-      input.addEventListener('input', () => {
-        input.value = input.value.replace(/\D/, '');
+  initForms();
+  Object(_services__WEBPACK_IMPORTED_MODULE_0__["handleDigitalInputs"])('input[name="user_phone"]');
+}
+
+/* harmony default export */ __webpack_exports__["default"] = (forms);
+
+/***/ }),
+
+/***/ "./src/js/modules/handlemodalstate.js":
+/*!********************************************!*\
+  !*** ./src/js/modules/handlemodalstate.js ***!
+  \********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _services__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./services */ "./src/js/modules/services.js");
+
+
+function handleModalState(state) {
+  function handleShape(shapesSelector) {
+    const shapeElements = document.querySelectorAll(shapesSelector);
+
+    for (const item of shapeElements) {
+      item.addEventListener('click', () => {
+        state.shape = item.dataset.shape;
       });
     }
   }
 
-  initForms();
-  handlePhoneInputs();
+  function handleStateInput(selector, key) {
+    const input = document.querySelector(selector);
+    input.addEventListener('input', () => {
+      state[key] = input.value;
+    });
+  }
+
+  function handleStateCheckboxes(selector, key) {
+    const checkboxes = document.querySelectorAll(selector);
+    checkboxes.forEach(item => {
+      item.addEventListener('change', () => {
+        if (item.checked) {
+          for (const checkbox of checkboxes) {
+            checkbox.checked = false;
+          }
+
+          item.checked = true;
+        } else {
+          for (const checkbox of checkboxes) {
+            checkbox.checked = true;
+          }
+
+          item.checked = false;
+        }
+
+        for (const checkbox of checkboxes) {
+          if (checkbox.checked) {
+            state[key] = item.dataset[key];
+          }
+        }
+      });
+    });
+  }
+
+  function handleButton(buttonSelector, neededKeys, selectorsToCheck) {
+    function disableButton() {
+      button.disabled = true;
+      button.style.opacity = '0.2';
+    }
+
+    function enableButton() {
+      button.disabled = false;
+      button.style.opacity = '';
+    }
+
+    function checkButton() {
+      return neededKeys.every(elem => state[elem]);
+    }
+
+    const button = document.querySelector(buttonSelector);
+    disableButton();
+
+    for (const item of document.querySelectorAll(selectorsToCheck)) {
+      if (item.type === 'checkbox') {
+        item.addEventListener('change', () => {
+          if (checkButton()) {
+            enableButton();
+          }
+        });
+      } else {
+        item.addEventListener('input', () => {
+          if (checkButton()) {
+            enableButton();
+          }
+        });
+      }
+    }
+  }
+
+  handleShape('.balcon_icons_img');
+  handleStateInput('#height', 'height');
+  handleStateInput('#width', 'width');
+  handleStateInput('#view_type', 'profile');
+  handleStateCheckboxes('.checkbox', 'type');
+  Object(_services__WEBPACK_IMPORTED_MODULE_0__["handleDigitalInputs"])('#height, #width');
+  handleButton('.popup_calc_button', ['width', 'height'], ['#width', '#height']);
+  handleButton('.popup_calc_profile_button', ['type'], ['[data-type="warm"]', '[data-type="cold"]']);
 }
 
-/* harmony default export */ __webpack_exports__["default"] = (forms);
+/* harmony default export */ __webpack_exports__["default"] = (handleModalState);
 
 /***/ }),
 
@@ -15903,6 +16001,7 @@ function forms() {
 __webpack_require__.r(__webpack_exports__);
 function modals() {
   let isShown = false;
+  const allModalsSelector = '[data-modal]';
 
   function showModal(modalSelector) {
     const modal = document.querySelector(modalSelector);
@@ -15913,10 +16012,13 @@ function modals() {
   }
 
   function hideModal(modalSelector) {
-    const modal = document.querySelector(modalSelector);
-    modal.style.display = ''; // document.body.style.overflow = '';
+    const modals = document.querySelectorAll(modalSelector);
 
-    document.body.classList.remove('modal-open');
+    for (const modal of modals) {
+      modal.style.display = ''; // document.body.style.overflow = '';
+
+      document.body.classList.remove('modal-open');
+    }
   }
 
   function runModal(modalSelector, triggerSelector, closeSelector) {
@@ -15930,12 +16032,13 @@ function modals() {
           evt.preventDefault();
         }
 
+        hideModal(allModalsSelector);
         showModal(modalSelector);
       });
     }
 
     modal.addEventListener('click', evt => {
-      if (evt.target === modal) {
+      if (evt.target === modal && !modal.dataset.closeOnlyWithButton) {
         hideModal(modalSelector);
       }
     });
@@ -15956,16 +16059,63 @@ function modals() {
   function showModalWithDelay(modalSelector, time) {
     setTimeout(() => {
       if (!isShown) {
+        hideModal(allModalsSelector);
         showModal(modalSelector);
       }
     }, time);
   }
 
   runModal('.popup_engineer', '.popup_engineer_btn', '.popup_close');
-  runModal('.popup', '.phone_link', '.popup_close'); // showModalWithDelay('.popup', 60000);
+  runModal('.popup', '.phone_link', '.popup_close');
+  runModal('.popup_calc', '.popup_calc_btn', '.popup_calc_close');
+  runModal('.popup_calc_profile', '.popup_calc_button', '.popup_calc_profile_close');
+  runModal('.popup_calc_end', '.popup_calc_profile_button', '.popup_calc_end_close'); // showModalWithDelay('.popup', 60000);
 }
 
 /* harmony default export */ __webpack_exports__["default"] = (modals);
+
+/***/ }),
+
+/***/ "./src/js/modules/services.js":
+/*!************************************!*\
+  !*** ./src/js/modules/services.js ***!
+  \************************************/
+/*! exports provided: handleDigitalInputs, sendForm */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "handleDigitalInputs", function() { return handleDigitalInputs; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "sendForm", function() { return sendForm; });
+/* harmony import */ var core_js_modules_es_string_replace_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.string.replace.js */ "./node_modules/core-js/modules/es.string.replace.js");
+/* harmony import */ var core_js_modules_es_string_replace_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_replace_js__WEBPACK_IMPORTED_MODULE_0__);
+
+function handleDigitalInputs(selector) {
+  for (const input of document.querySelectorAll(selector)) {
+    input.addEventListener('input', () => {
+      input.value = input.value.replace(/\D/, '');
+    });
+  }
+}
+async function sendForm(url, data) {
+  // let object = {};
+  // data.forEach((value, key) => object[key] = value);
+  // let json = JSON.stringify(object); 
+  // console.log(json);
+  const response = await fetch(url, {
+    method: 'POST',
+    // headers: {
+    //     'Content-Type': 'application/json;charset=utf-8'
+    // },           
+    body: data
+  });
+
+  if (response.ok) {
+    return await response.text();
+  } else {
+    throw new Error("Wrong server responce");
+  }
+}
 
 /***/ }),
 
@@ -15978,13 +16128,13 @@ function modals() {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-function tabs(tabsWrapperSelector, tabSelector, contentSelector, activeClass) {
+function tabs(tabsWrapperSelector, tabSelector, contentSelector, activeClass, display = 'block') {
   const wrapper = document.querySelector(tabsWrapperSelector);
   const tabs = wrapper.querySelectorAll(tabSelector);
   const contentList = document.querySelectorAll(contentSelector);
 
   function showTab(i = 0) {
-    contentList[i].style.display = 'block';
+    contentList[i].style.display = display;
     tabs[i].classList.add(activeClass);
   }
 

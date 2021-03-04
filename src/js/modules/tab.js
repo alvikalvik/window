@@ -1,10 +1,10 @@
-function tabs(tabsWrapperSelector, tabSelector, contentSelector, activeClass) {  
+function tabs(tabsWrapperSelector, tabSelector, contentSelector, activeClass, display = 'block') {  
     const wrapper = document.querySelector(tabsWrapperSelector);
     const tabs = wrapper.querySelectorAll(tabSelector);
     const contentList = document.querySelectorAll(contentSelector);
 
     function showTab(i = 0) {        
-        contentList[i].style.display = 'block';  
+        contentList[i].style.display = display;  
         tabs[i].classList.add(activeClass);
     }
 
