@@ -1,7 +1,6 @@
 import { handleDigitalInputs } from "./services";
 
-function handleModalState(state) {
-    
+function handleModalState(state) {    
 
     function handleShape(shapesSelector) {
         const shapeElements = document.querySelectorAll(shapesSelector);
@@ -91,8 +90,7 @@ function handleModalState(state) {
     handleDigitalInputs('#height, #width');
 
     handleButton('.popup_calc_button', ['width', 'height'], ['#width', '#height']);
-    handleButton('.popup_calc_profile_button', ['type'], ['[data-type="warm"]', '[data-type="cold"]']);
-    
+    handleButton('.popup_calc_profile_button', ['type'], ['[data-type="warm"]', '[data-type="cold"]']);    
 
 }
 

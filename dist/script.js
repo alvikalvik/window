@@ -15788,6 +15788,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modules_tab__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./modules/tab */ "./src/js/modules/tab.js");
 /* harmony import */ var _modules_forms__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./modules/forms */ "./src/js/modules/forms.js");
 /* harmony import */ var _modules_handlemodalstate__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./modules/handlemodalstate */ "./src/js/modules/handlemodalstate.js");
+/* harmony import */ var _modules_timer__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./modules/timer */ "./src/js/modules/timer.js");
+
 
 
 
@@ -15798,12 +15800,14 @@ window.addEventListener('DOMContentLoaded', () => {
     shape: 1,
     profile: 'wood'
   };
+  const deadline = '2022-03-09';
   Object(_modules_handlemodalstate__WEBPACK_IMPORTED_MODULE_4__["default"])(modalState);
   Object(_modules_modal__WEBPACK_IMPORTED_MODULE_1__["default"])();
   Object(_modules_tab__WEBPACK_IMPORTED_MODULE_2__["default"])('.glazing_slider', '.glazing_block', '.glazing_content', 'active');
   Object(_modules_tab__WEBPACK_IMPORTED_MODULE_2__["default"])('.decoration_slider', '.no_click', '.decoration_content > .row > div', 'after_click');
   Object(_modules_tab__WEBPACK_IMPORTED_MODULE_2__["default"])('.balcon_icons', '.balcon_icons_img', '.big_img > img', 'do_image_more', 'inline');
   Object(_modules_forms__WEBPACK_IMPORTED_MODULE_3__["default"])(modalState);
+  Object(_modules_timer__WEBPACK_IMPORTED_MODULE_5__["default"])('#timer', '#days', '#hours', '#minutes', '#seconds', deadline);
 });
 
 /***/ }),
@@ -16169,6 +16173,75 @@ function tabs(tabsWrapperSelector, tabSelector, contentSelector, activeClass, di
 }
 
 /* harmony default export */ __webpack_exports__["default"] = (tabs);
+
+/***/ }),
+
+/***/ "./src/js/modules/timer.js":
+/*!*********************************!*\
+  !*** ./src/js/modules/timer.js ***!
+  \*********************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+function timer(timerSelector, daysSelector, housSelector, minutesSelector, secondsSelector, deadline) {
+  function getTime(endtime) {
+    const now = new Date();
+    const end = new Date(endtime);
+    const total = end - now;
+    const seconds = Math.floor(total / 1000 % 60);
+    const minutes = Math.floor(total / 1000 / 60 % 60);
+    const hours = Math.floor(total / 1000 / 60 / 60 % 24);
+    const days = Math.floor(total / 1000 / 60 / 60 / 24);
+    return {
+      total,
+      days,
+      hours,
+      minutes,
+      seconds
+    };
+  }
+
+  function fixZero(num) {
+    if (num >= 0 && num <= 9) {
+      return `0${num}`;
+    } else {
+      return num;
+    }
+  }
+
+  function initTimer() {
+    function updateTimer() {
+      const currentTime = getTime(deadline);
+
+      if (currentTime.total <= 0) {
+        clearInterval(timerInterval);
+        daysElem.innerText = fixZero(0);
+        hoursElem.innerText = fixZero(0);
+        minutesElem.innerText = fixZero(0);
+        secondsElem.innerText = fixZero(0);
+      } else {
+        daysElem.innerText = fixZero(currentTime.days);
+        hoursElem.innerText = fixZero(currentTime.hours);
+        minutesElem.innerText = fixZero(currentTime.minutes);
+        secondsElem.innerText = fixZero(currentTime.seconds);
+      }
+    }
+
+    const timer = document.querySelector(timerSelector);
+    const daysElem = timer.querySelector(daysSelector);
+    const hoursElem = timer.querySelector(housSelector);
+    const minutesElem = timer.querySelector(minutesSelector);
+    const secondsElem = timer.querySelector(secondsSelector);
+    const timerInterval = setInterval(updateTimer, 1000);
+    updateTimer();
+  }
+
+  initTimer();
+}
+
+/* harmony default export */ __webpack_exports__["default"] = (timer);
 
 /***/ }),
 
