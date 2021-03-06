@@ -4,6 +4,7 @@ import tabs from './modules/tab';
 import forms from './modules/forms';
 import handleModalState from './modules/handlemodalstate';
 import timer from './modules/timer';
+import images from './modules/images';
 
 window.addEventListener('DOMContentLoaded', () => {     
     const modalState = {
@@ -19,4 +20,5 @@ window.addEventListener('DOMContentLoaded', () => {
     tabs('.balcon_icons', '.balcon_icons_img', '.big_img > img', 'do_image_more', 'inline');
     forms(modalState);
     timer('#timer', '#days', '#hours', '#minutes', '#seconds', deadline);
+    images();
 });

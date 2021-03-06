@@ -15789,6 +15789,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modules_forms__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./modules/forms */ "./src/js/modules/forms.js");
 /* harmony import */ var _modules_handlemodalstate__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./modules/handlemodalstate */ "./src/js/modules/handlemodalstate.js");
 /* harmony import */ var _modules_timer__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./modules/timer */ "./src/js/modules/timer.js");
+/* harmony import */ var _modules_images__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./modules/images */ "./src/js/modules/images.js");
+
 
 
 
@@ -15808,6 +15810,7 @@ window.addEventListener('DOMContentLoaded', () => {
   Object(_modules_tab__WEBPACK_IMPORTED_MODULE_2__["default"])('.balcon_icons', '.balcon_icons_img', '.big_img > img', 'do_image_more', 'inline');
   Object(_modules_forms__WEBPACK_IMPORTED_MODULE_3__["default"])(modalState);
   Object(_modules_timer__WEBPACK_IMPORTED_MODULE_5__["default"])('#timer', '#days', '#hours', '#minutes', '#seconds', deadline);
+  Object(_modules_images__WEBPACK_IMPORTED_MODULE_6__["default"])();
 });
 
 /***/ }),
@@ -15991,6 +15994,62 @@ function handleModalState(state) {
 }
 
 /* harmony default export */ __webpack_exports__["default"] = (handleModalState);
+
+/***/ }),
+
+/***/ "./src/js/modules/images.js":
+/*!**********************************!*\
+  !*** ./src/js/modules/images.js ***!
+  \**********************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+function images() {
+  const imgWrapper = document.querySelector('.works .row');
+  const imgPopup = document.createElement('div');
+  const bigImg = document.createElement('img');
+
+  function initImages() {
+    imgPopup.classList.add('popup');
+    imgPopup.style.display = 'none';
+    imgPopup.style.justifyContent = 'center';
+    imgPopup.style.alignItems = 'center';
+    bigImg.style.maxWidth = '98vw';
+    bigImg.style.maxHeight = '98vh';
+    imgPopup.append(bigImg);
+    imgWrapper.append(imgPopup);
+    imgWrapper.addEventListener('click', evt => {
+      const target = evt.target;
+
+      if (target) {
+        evt.preventDefault();
+      }
+
+      if (target && target.matches('.preview')) {
+        showBigImg(target.parentElement.getAttribute('href'));
+      }
+
+      if (target && target === imgPopup) {
+        hideBigImg();
+      }
+    });
+  }
+
+  function showBigImg(src) {
+    bigImg.setAttribute('src', src);
+    imgPopup.style.display = 'flex';
+  }
+
+  function hideBigImg() {
+    imgPopup.style.display = 'none';
+  }
+
+  initImages();
+}
+
+/* harmony default export */ __webpack_exports__["default"] = (images);
 
 /***/ }),
 
