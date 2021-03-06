@@ -18,6 +18,19 @@ body {
   color: red;
 }
 
+.faded {
+  animation: faded 1s;
+}
+
+@keyframes faded {
+  from {
+    opacity: 0.1;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 a:hover {
   text-decoration: none;
 }
@@ -62,6 +75,7 @@ textarea:focus {
   margin-bottom: 2rem;
   text-align: center;
   border-radius: 1rem;
+  box-sizing: border-box;
   -moz-box-sizing: border-box;
 }
 

@@ -16040,10 +16040,13 @@ function images() {
   function showBigImg(src) {
     bigImg.setAttribute('src', src);
     imgPopup.style.display = 'flex';
+    document.body.classList.add('modal-open');
   }
 
   function hideBigImg() {
     imgPopup.style.display = 'none';
+    document.body.style.overflow = '';
+    document.body.classList.remove('modal-open');
   }
 
   initImages();
